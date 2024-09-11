@@ -8,6 +8,18 @@ vim.opt.expandtab = true
 vim.cmd("set number")
 vim.cmd("set signcolumn=yes")
 vim.opt.confirm = true
+vim.g.clipboard = {
+  name = 'wl-clipboard',
+  copy = {
+    ['+'] = 'wl-copy',
+    ['*'] = 'wl-copy',
+  },
+  paste = {
+    ['+'] = 'wl-paste',
+    ['*'] = 'wl-paste',
+  },
+  cache_enabled = 0,
+}
 
 local autocmd = vim.api.nvim_create_autocmd
 autocmd("BufEnter", {
@@ -80,6 +92,18 @@ require("lazy").setup({
 	end,
 },]]--
 	{
+		'projekt0n/github-nvim-theme',
+		  lazy = false, -- make sure we load this during startup if it is your main colorscheme
+		  priority = 1000, -- make sure to load this before all the other start plugins
+		  config = function()
+		    require('github-theme').setup({
+		      -- ...
+		    })
+
+		    vim.cmd('colorscheme github_light')
+		  end,
+
+		--[[
 		dependencies = {
 			"rktjmp/lush.nvim",
 		},
@@ -91,7 +115,14 @@ require("lazy").setup({
 			vim.cmd("set background=light")
 			vim.cmd.colorscheme "zenbones"
 		end,
+		]]--
 
+		--[["ellisonleao/gruvbox.nvim",
+		priority = 1000,
+		config = true,
+		config = function()
+			vim.cmd.colorscheme "gruvbox"
+		end,]]--
 	},
 --[[{
 	"rose-pine/neovim",
@@ -202,4 +233,23 @@ capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
 	dependencies = 'MunifTanjim/nui.nvim',
 	config = function() require('competitest').setup() end,
 },
+{
+	'nvim-telescope/telescope.nvim', tag = '0.1.8',
+	-- or                              , branch = '0.1.x',
+	dependencies = { 'nvim-lua/plenary.nvim' },
+	config = function()
+		require('telescope').setup{
+			defaults = {
+				file_ignore_patterns = {"node_modules"}
+			}
+		}
+		local builtin = require('telescope.builtin')
+		vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = "Find files" })
+		vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = "Live grep" })
+		vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = "Find buffers" })
+		vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = "Find help tags" })
+		end
+}
+
+
 })
